@@ -5,7 +5,7 @@ function authenticate ({firebase, props, path}) {
     .then((decodedToken) => ({uid: decodedToken.uid}))
 }
 
-function createRunTask (task, cb) {
+function createRunTask (task, authenticate, cb) {
   return (data, progress, resolve, reject) => {
     const _execution = data._execution
 
@@ -29,6 +29,7 @@ function createRunTask (task, cb) {
 export class QueueHandler {
   constructor (options = {}, cb) {
     this.specPrefix = options.specPrefix || ''
+    this.authenticate = options.authenticate || authenticate
     this.cb = cb || function () { throw new Error('You have to add a callback') }
     this.tasks = options.tasks || []
     this.queueRef = options.queueRef
@@ -39,7 +40,7 @@ export class QueueHandler {
       return new Queue(this.queueRef, {
         specId: this.specPrefix ? `${this.specPrefix}_${task.specId}` : task.specId,
         numWorkers: task.numWorkers
-      }, createRunTask(task, this.cb))
+      }, createRunTask(task, this.authenticate, this.cb))
     })
   }
   stop () {
