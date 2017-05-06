@@ -18,30 +18,32 @@ The router of Cerebral does not affect your view layer. A url change triggers a 
 
 ```js
 import {Controller} from 'cerebral'
-import Router from 'cerebral-router'
+import Router from '@cerebral/router'
 
 const controller = Controller({
-  router: Router({
-    // Define routes and point to signal paths
-    routes: {
-      '/': 'app.homeRouted'
-    },
+  modules: {
+    router: Router({
+      // Define routes and point to signal paths
+      routes: {
+        '/': 'app.homeRouted'
+      },
 
-    // Merge query params into payload of signal
-    query: false,
+      // Merge query params into payload of signal
+      query: false,
 
-    // Only react to hash urls
-    onlyHash: false,
+      // Only react to hash urls
+      onlyHash: false,
 
-    // Set a base url, if your app lives on a subpath
-    baseUrl: null,
+      // Set a base url, if your app lives on a subpath
+      baseUrl: null,
 
-    // Will allow none matching routes on same origin to run as normal
-    allowEscape: false,
+      // Will allow none matching routes on same origin to run as normal
+      allowEscape: false,
 
-    // Will make the router not run the initial route
-    preventAutostart: false
-  })
+      // Will make the router not run the initial route
+      preventAutostart: false
+    })
+  }
 })
 ```
 
@@ -52,25 +54,27 @@ keys represent urls and values represent signal paths:
 
 ```js
 import {Controller} from 'cerebral'
-import Router from 'cerebral-router'
+import Router from '@cerebral/router'
 
 const controller = Controller({
-  router: Router({
-    routes: {
-      // Trigger signal when root routed
-      '/': 'app.homeRouted',
+  modules: {
+    router: Router({
+      routes: {
+        // Trigger signal when root routed
+        '/': 'app.homeRouted',
 
-      // Trigger signal, passing in "itemId" on payload, example:
-      // "/items/123" -> {itemId: '123'}
-      '/items/:itemId': 'app.itemRouted',
+        // Trigger signal, passing in "itemId" on payload, example:
+        // "/items/123" -> {itemId: '123'}
+        '/items/:itemId': 'app.itemRouted',
 
-      // Nest routes
-      '/users': {
-        '/': 'app.usersRouted',
-        '/:userId': 'app.userRouted'
+        // Nest routes
+        '/users': {
+          '/': 'app.usersRouted',
+          '/:userId': 'app.userRouted'
+        }
       }
-    }
-  })
+    })
+  }
 })
 ```
 
@@ -81,29 +85,31 @@ route definitions like this:
 
 ```js
 import {Controller} from 'cerebral'
-import Router from 'cerebral-router'
+import Router from '@cerebral/router'
 
 const controller = Controller({
-  router: Router({
-    routes: [
-      {
-        path: '/',
-        signal: 'app.homeRouted'
-      },
-      {
-        path: '/project/:projectId',
-        map: {projectId: state`user.projectId`},
-        signal: 'app.settingsRouted',
-      },
-      {
-        path: '/settings/:tab',
-        // whitelist 'focus' query parameter
-        // and 'tab' url parameter
-        map: {tab: props`tab`, focus: props`focus`},
-        signal: 'app.settingsRouted',
-      }
-    ]
-  })
+  modules: {
+    router: Router({
+      routes: [
+        {
+          path: '/',
+          signal: 'app.homeRouted'
+        },
+        {
+          path: '/project/:projectId',
+          map: {projectId: state`user.projectId`},
+          signal: 'app.settingsRouted',
+        },
+        {
+          path: '/settings/:tab',
+          // whitelist 'focus' query parameter
+          // and 'tab' url parameter
+          map: {tab: props`tab`, focus: props`focus`},
+          signal: 'app.settingsRouted',
+        }
+      ]
+    })
+  }
 })
 ```
 
@@ -170,7 +176,7 @@ function myAction({router}) {
 
 *factory*
 ```js
-import {goTo} from 'cerebral-router/operators'
+import {goTo} from '@cerebral/router/operators'
 
 export default [
   goTo('/items')
@@ -188,7 +194,7 @@ function myAction({router}) {
 
 *factory*
 ```js
-import {redirect} from 'cerebral-router/operators'
+import {redirect} from '@cerebral/router/operators'
 
 export default [
   redirect('/items')
@@ -205,7 +211,7 @@ function myAction({router}) {
 
 *factory*
 ```js
-import {reload} from 'cerebral-router/operators'
+import {reload} from '@cerebral/router/operators'
 
 export default [
   reload
@@ -224,7 +230,7 @@ function myAction({router}) {
 
 *factory*
 ```js
-import {redirectToSignal} from 'cerebral-router/operators'
+import {redirectToSignal} from '@cerebral/router/operators'
 
 export default [
   redirectToSignal('app.itemsRouted', props`payload`)
