@@ -88,7 +88,8 @@ export default class Router {
       this.controller.runSignal('router.routed', [
         ({state, resolve}) => {
           stateMapping.forEach((key) => {
-            state.set(resolve.path(map[key]), values[key] || null)
+            const value = values[key]
+            state.set(resolve.path(map[key]), value === undefined ? null : value)
           })
         }
       ])
@@ -153,7 +154,9 @@ export default class Router {
       shouldUpdate = shouldUpdate || (stateMapping.indexOf(key) >= 0 && hasChangedPath(changed, path))
 
       if (!this.options.filterFalsy || value) {
-        resolved[key] = value
+        // Cerebral state only supports null and url-mapper only supports
+        // undefined: so we map from one to the other here.
+        resolved[key] = value === null ? undefined : value
       }
 
       return resolved

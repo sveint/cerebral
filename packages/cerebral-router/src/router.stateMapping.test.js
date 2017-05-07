@@ -55,4 +55,26 @@ describe('stateMapping', () => {
     controller.getSignal('test')() // trigger state changes
     assert.equal(addressbar.value, 'http://localhost:3000/bar?focus=someField')
   })
+
+  it('should update url on null state', () => {
+    const controller = makeTest(
+      Router({
+        preventAutostart: true,
+        routes: [{
+          path: '/:page?',
+          map: {page: state`page`}
+        }]
+      }), {
+        test: [({state, props}) => {
+          state.set('page', props.page)
+        }]
+      }
+    )
+
+    triggerUrlChange('/foo') // make route active
+    controller.getSignal('test')({page: 'bar'}) // trigger state changes
+    assert.equal(addressbar.value, 'http://localhost:3000/bar')
+    controller.getSignal('test')({page: null}) // trigger state changes
+    assert.equal(addressbar.value, 'http://localhost:3000/')
+  })
 })
