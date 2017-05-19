@@ -65,7 +65,7 @@ glob('@(packages|demos)/*/package.json', (er, files) => {
 
     const toInstall = Object.keys(operations).filter(k => operations[k].type === 'install').map(k => {
       const op = operations[k]
-      return `${op.dependency}@${op.version}`
+      return {dependency:`${op.dependency}@${op.version}`, packages: op.packages}
     })
 
     const conflict = Object.keys(operations).filter(k => operations[k].type === 'conflict').map(k => {
@@ -87,10 +87,13 @@ glob('@(packages|demos)/*/package.json', (er, files) => {
     }
 
     if (toInstall.length) {
+      const dependencies = toInstall.map(p => p.dependency)
+      const packages = Object.keys(Object.assign({}, ...toInstall.map(p => p.packages)))
       console.log('')
       console.log(`************** ${dependencyType} TO INSTALL **************`)
+      console.log(`REQUIRED BY: ${packages.join(', ')}`)
       console.log('')
-      console.log(`${installCmd[dependencyType]} ${toInstall.join(' ')}`)
+      console.log(`${installCmd[dependencyType]} ${dependencies.join(' ')}`)
       console.log('')
     }
 
